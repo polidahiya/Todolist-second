@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kanban Board Task Management</title>
+    <style>
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background-color: rgb(143, 63, 101);
+        margin: 0;
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+        --hovercolor: rgb(54, 64, 74);
+        --maintextcolor: rgb(158, 172, 186);
+        --activebgcolor: rgb(33, 38, 42);
+      }
+      ::-webkit-scrollbar {
+        background-color: rgb(122, 54, 86);
+        width: 0;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: rgb(174, 133, 152);
+        border-radius: 100px;
+      }
+      nav {
+        height: 45px;
+        width: 100vw;
+        background-color: rgb(29, 33, 37);
+        padding: 7px 10px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+      }
+      .logo {
+        height: 100%;
+        width: fit-content;
+        padding: 7.5px;
+        box-sizing: border-box;
+        cursor: pointer;
+        border-radius: 3px;
+        gap: 7px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+      }
+      .logo:hover {
+        background-color: var(--hovercolor);
+      }
+      .logoicon {
+        height: 100%;
+        aspect-ratio: 1;
+        background-color: var(--maintextcolor);
+        border-radius: 2px;
+        box-sizing: border-box;
+        position: relative;
+        display: flex;
+        padding: 2.5px;
+        gap: 2px;
+      }
+      .logomoveleft,
+      .logomoveright {
+        background-color: var(--activebgcolor);
+        width: 100%;
+        height: 100%;
+      }
+      .logomoveright {
+        height: 50%;
+      }
+      .logo:hover .logomoveleft {
+        background-color: var(--hovercolor);
+        animation: iconmove 0.3s 0.3s infinite alternate ease-in-out;
+      }
+      .logo:hover .logomoveright {
+        background-color: var(--hovercolor);
+        animation: iconmove 0.3s infinite alternate ease-in-out;
+      }
+      @keyframes iconmove {
+        0% {
+          height: 50%;
+        }
+        100% {
+          height: 100%;
+        }
+      }
+      .logotext {
+        color: var(--maintextcolor);
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+        font-size: 20px;
+        font-weight: 900;
+        user-select: none;
+      }
+      @media (width<385px) {
+        .logotext {
+          width: 200px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+      .user {
+        height: 100%;
+        aspect-ratio: 1;
+        padding: 5px;
+        box-sizing: border-box;
+        border-radius: 50%;
+        margin-right: 20px;
+        cursor: pointer;
+      }
+      .user:hover {
+        background-color: var(--hovercolor);
+      }
+      /*  */
+      section {
+        padding: 13px;
+        display: flex;
+        gap: 13px;
+        overflow-x: scroll;
+        min-height: calc(100dvh - 60px);
+        box-sizing: border-box;
+      }
+      @media (width<450px) {
+        section {
+          flex-direction: column;
+        }
+        ::-webkit-scrollbar {
+          background-color: transparent;
+        }
+      }
+      @media (width>925px) {
+        section {
+          justify-content: center;
+        }
+        ::-webkit-scrollbar {
+          background-color: transparent;
+        }
+      }
+      .taskcategory {
+        height: fit-content;
+        min-width: 270px;
+        background-color: black;
+        border-radius: 13px;
+        padding: 50px 10px;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        user-select: none;
+      }
+      .categoryheading {
+        position: absolute;
+        top: 15px;
+        left: 20px;
+        color: var(--maintextcolor);
+        font-weight: 600;
+        pointer-events: none;
+      }
+      .addtask {
+        color: var(--maintextcolor);
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        height: 30px;
+        width: calc(100% - 50px);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0px 15px;
+        border-radius: 8px;
+        display: flex;
+      }
+      .addtask:hover {
+        background-color: var(--hovercolor);
+      }
+      .addtasklogo {
+        height: 40%;
+        aspect-ratio: 1;
+        position: relative;
+      }
+      .addtasklogo::before {
+        position: absolute;
+        content: "";
+        height: 100%;
+        width: 2px;
+        background-color: var(--maintextcolor);
+        left: 50%;
+        transform: translateX(-1px);
+      }
+      .addtasklogo::after {
+        position: absolute;
+        content: "";
+        width: 100%;
+        height: 2px;
+        background-color: var(--maintextcolor);
+        top: 50%;
+        transform: translateY(-1px);
+      }
+      /*  */
+      .task {
+        height: 35px;
+        background-color: var(--activebgcolor);
+        color: var(--maintextcolor);
+        display: flex;
+        align-items: center;
+        border-radius: 10px;
+        padding: 2px 2px 2px 15px;
+        box-sizing: border-box;
+      }
+      .task:hover {
+        background-color: var(--hovercolor);
+      }
+      .tasktitle {
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        user-select: none;
+      }
+      .taskdetails,
+      .taskid,
+      .tasktype {
+        display: none;
+      }
+      .edittask {
+        height: 100%;
+        aspect-ratio: 1;
+        border-radius: 10px;
+        padding: 5px;
+        box-sizing: border-box;
+        opacity: 0;
+      }
+      .edittask:hover {
+        background-color: rgb(63, 75, 86);
+      }
+      .task:hover .edittask {
+        opacity: 1;
+      }
+      .dummytask {
+        position: absolute;
+        width: 270px;
+        display: none;
+      }
+      .movingtask {
+        position: fixed;
+        z-index: 100;
+        pointer-events: none;
+        width: 270px;
+        transform: rotateZ(5deg);
+      }
+      /*  */
+      .addtaskinput {
+        height: 60px;
+        max-height: 150px;
+        min-height: 60px;
+        background-color: var(--activebgcolor);
+        border: none;
+        border-radius: 10px;
+        outline: none;
+        min-width: 270px;
+        max-width: 270px;
+        padding: 10px 15px;
+        box-sizing: border-box;
+        color: var(--maintextcolor);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: none;
+      }
+      .yesorno {
+        color: var(--maintextcolor);
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        height: 30px;
+        width: calc(100% - 50px);
+        display: none;
+        align-items: center;
+        gap: 10px;
+        padding: 0px 0px;
+        border-radius: 8px;
+      }
+      .yesorno span {
+        height: 100%;
+        aspect-ratio: 5/3;
+        border-radius: 8px;
+        background-color: var(--activebgcolor);
+        display: grid;
+        place-content: center;
+      }
+      .yes:hover {
+        background: green;
+        color: white;
+      }
+      .no:hover {
+        background: red;
+        color: white;
+      }
+      /* edit task */
+      .showtask {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100dvh;
+        background-color: rgba(0, 0, 0, 0.402);
+        z-index: 200px;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        display: grid;
+        place-content: center;
+        display: none;
+      }
+      .carddetails {
+        width: 100vw;
+        max-width: 500px;
+        background-color: rgb(143, 63, 101);
+        display: flex;
+        flex-direction: column;
+        padding: 50px 20px 20px 20px;
+        box-sizing: border-box;
+        position: relative;
+      }
+      .showtaskcanclebutton {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        height: 30px;
+        aspect-ratio: 1;
+        color: white;
+        display: grid;
+        place-content: center;
+        cursor: pointer;
+        user-select: none;
+      }
+      .showtaskcanclebutton:hover {
+        background-color: red;
+      }
+      .carddetails label {
+        color: white;
+        font-size: 17px;
+      }
+      .carddetails label:nth-child(3) {
+        margin-top: 30px;
+      }
+      .carddetails input,
+      .carddetails textarea {
+        margin-top: 10px;
+        min-height: 25px;
+        outline: 2px solid rgb(255, 255, 255);
+        padding: 5px;
+        box-sizing: border-box;
+        font-size: medium;
+      }
+      .carddetails textarea {
+        min-width: 100%;
+        max-width: 100%;
+        min-height: 150px;
+        max-height: 350px;
+      }
+      .showtaskbuttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        width: 100%;
+      }
+      .showtaskbuttons .save,
+      .showtaskbuttons .exit,
+      .showtaskbuttons .delete {
+        height: 30px;
+        width: 100px;
+        border-radius: 10px;
+        border: 2px solid white;
+        display: grid;
+        place-content: center;
+        color: white;
+        cursor: pointer;
+      }
+      .showtaskbuttons .save:hover {
+        background-color: rgba(254, 114, 252, 0.45);
+      }
+      .showtaskbuttons .exit:hover {
+        background-color: rgba(255, 255, 255, 0.45);
+      }
+      .showtaskbuttons .delete {
+        margin-left: auto;
+      }
+      .showtaskbuttons .delete:hover {
+        background-color: red;
+        border-color: red;
+      }
+      /* singnup */
+      .cancel {
+        position: absolute;
+        top: 20px;
+        right: 50px;
+        color: var(--maintextcolor);
+        font-size: 30px;
+        width: 40px;
+        display: grid;
+        place-content: center;
+        border-radius: 50%;
+        aspect-ratio: 1;
+      }
+      .cancel:hover {
+        background-color: red;
+        user-select: none;
+        cursor: pointer;
+      }
+      .signup {
+        position: fixed;
+        height: 100dvh;
+        width: 100vw;
+        top: 0;
+        left: 0;
+        background-color: var(--activebgcolor);
+        display: none;
+        place-content: center;
+      }
+      .signup div {
+        height: 400px;
+        aspect-ratio: 3/4;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        padding: 0px 20px;
+        box-sizing: border-box;
+        position: relative;
+      }
+      .signshowhidepass,
+      .loginshowhidepass {
+        position: absolute;
+        color: var(--maintextcolor);
+        right: 20px;
+        top: 170px;
+        user-select: none;
+        cursor: pointer;
+      }
+      .signup label {
+        color: var(--maintextcolor);
+        font-size: 20px;
+      }
+      .signup input {
+        background-color: transparent;
+        border: none;
+        outline: none;
+        border-bottom: 2px solid var(--maintextcolor);
+        color: var(--maintextcolor);
+        font-size: 15px;
+        text-indent: 10px;
+      }
+      .signup button {
+        border: none;
+        height: 30px;
+        border-radius: 20px;
+        cursor: pointer;
+      }
+      .signup p {
+        color: var(--maintextcolor);
+        text-align: center;
+      }
+      /* login */
+      .login {
+        position: fixed;
+        height: 100dvh;
+        width: 100vw;
+        top: 0;
+        left: 0;
+        background-color: var(--activebgcolor);
+        display: none;
+        place-content: center;
+      }
+      .login div {
+        height: 300px;
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        padding: 0px 20px;
+        box-sizing: border-box;
+        position: relative;
+      }
+      .loginshowhidepass {
+        top: 135px;
+      }
+      .login label {
+        color: var(--maintextcolor);
+        font-size: 20px;
+      }
+      .login input {
+        background-color: transparent;
+        border: none;
+        outline: none;
+        border-bottom: 2px solid var(--maintextcolor);
+        color: var(--maintextcolor);
+        font-size: 15px;
+        text-indent: 10px;
+      }
+      .login button {
+        border: none;
+        height: 30px;
+        border-radius: 20px;
+        cursor: pointer;
+      }
+      input:-webkit-autofill {
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: var(--maintextcolor);
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <div class="logoicon">
+          <div class="logomoveleft"></div>
+          <div class="logomoveright"></div>
+        </div>
+        <div class="logotext">Kanban Board Task Management</div>
+      </div>
+      <div class="user" onclick="components('signup')">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g
+            id="SVGRepo_tracerCarrier"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></g>
+          <g id="SVGRepo_iconCarrier">
+            <circle
+              cx="12"
+              cy="6"
+              r="4"
+              stroke="#9eacba"
+              stroke-width="1.5"
+            ></circle>
+            <path
+              d="M15 20.6151C14.0907 20.8619 13.0736 21 12 21C8.13401 21 5 19.2091 5 17C5 14.7909 8.13401 13 12 13C15.866 13 19 14.7909 19 17C19 17.3453 18.9234 17.6804 18.7795 18"
+              stroke="#9eacba"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            ></path>
+          </g>
+        </svg>
+      </div>
+    </nav>
+    <section>
+      <div class="taskcategory todo">
+        <div class="categoryheading">To do</div>
+        <!--  -->
+        <div class="addtask" onclick="showaddtask(this)">
+          <div class="addtasklogo"></div>
+          <div class="addtexttext">Add a card</div>
+        </div>
+        <textarea
+          class="addtaskinput"
+          type="text"
+          placeholder="Enter title here"
+        ></textarea>
+        <div class="yesorno">
+          <span class="yes" onclick="addtask(this,'todo')">Done</span>
+          <span class="no" onclick="hideaddtask(this)">Cancel</span>
+        </div>
+        <!--  -->
+      </div>
+      <div class="taskcategory doing">
+        <div class="categoryheading">Doing</div>
+
+        <!--  -->
+        <div class="addtask" onclick="showaddtask(this)">
+          <div class="addtasklogo"></div>
+          <div class="addtexttext">Add a card</div>
+        </div>
+        <textarea
+          class="addtaskinput"
+          type="text"
+          placeholder="Enter title here"
+        ></textarea>
+        <div class="yesorno">
+          <span class="yes" onclick="addtask(this,'doing')">Done</span>
+          <span class="no" onclick="hideaddtask(this)">Cancel</span>
+        </div>
+      </div>
+      <!--  -->
+      <div class="taskcategory done">
+        <div class="categoryheading">Done</div>
+        <!--  -->
+        <div class="addtask" onclick="showaddtask(this)">
+          <div class="addtasklogo"></div>
+          <div class="addtexttext">Add a card</div>
+        </div>
+        <textarea
+          class="addtaskinput"
+          type="text"
+          placeholder="Enter title here"
+        ></textarea>
+        <div class="yesorno">
+          <span class="yes" onclick="addtask(this,'done')">Done</span>
+          <span class="no" onclick="hideaddtask(this)">Cancel</span>
+        </div>
+      </div>
+    </section>
+    <!-- showtask task -->
+    <div class="showtask">
+      <div class="carddetails">
+        <label for="title">Title :-</label>
+        <input type="text" id="edittasktitle" name="title" />
+        <label for="description">Description :-</label>
+        <textarea
+          name=""
+          id="edittaskdesc"
+          placeholder="Write abrief description here"
+        ></textarea>
+        <div class="showtaskbuttons">
+          <div class="save" onclick="savetask()">Save</div>
+          <div class="exit" onclick="hidetaskdetails()">Exit</div>
+          <div class="delete" onclick="deletetask()">Delete</div>
+        </div>
+        <div class="showtaskcanclebutton" onclick="hidetaskdetails()">X</div>
+      </div>
+    </div>
+    <!-- signup -->
+    <section class="signup component">
+      <span class="cancel" onclick="components()">X</span>
+      <div>
+        <label for="name">Name:-</label>
+        <input
+          type="text"
+          name="name"
+          id="signupupname"
+          placeholder="eg:-joe"
+        />
+        <label for="email">Email:-</label>
+        <input
+          type="email"
+          name="email"
+          id="signupupemail"
+          placeholder="eg:-joe123@gmail.com"
+        />
+        <label for="password">Password:-</label>
+        <input type="password" name="password" id="signupuppassword" />
+        <button onclick="signup()">Signup</button>
+        <p>Already have an account?</p>
+        <button onclick="components('login')">Login</button>
+        <span class="signshowhidepass" onclick="changepasstype(this)"
+          >Show</span
+        >
+      </div>
+    </section>
+    <!-- login -->
+    <section class="login component">
+      <span class="cancel" onclick="components('signup')">X</span>
+      <div action="">
+        <label for="email">Email:-</label>
+        <input
+          type="email"
+          name="email"
+          id="loginupemail"
+          placeholder="eg:-joe123@gmail.com"
+        />
+        <label for="password">Password:-</label>
+        <input type="password" name="password" id="loginuppassword" />
+        <button onclick="login()">Login</button>
+        <span class="loginshowhidepass" onclick="changepasstype(this)"
+          >Show</span
+        >
+      </div>
+    </section>
+    <script>
+      // move task form one category to another
+      let ismoving = false;
+      let selectedtask;
+      let tasks;
+      function refreshselectedtask() {
+        tasks = document.querySelectorAll(".task");
+        tasks.forEach((task, index) => {
+          task.addEventListener("mousedown", () => {
+            ismoving = true;
+            selectedtask = task;
+          });
+        });
+        //
+        tasks.forEach((item) => {
+          item.addEventListener("mousemove", (e) => {
+            if (ismoving) {
+              tasks.forEach((item1) => {
+                item1.style.marginBottom = "0px";
+                item1.style.marginTop = "0px";
+              });
+              let rect = item.getBoundingClientRect();
+              if (e.clientY - rect.top > 25) {
+                item.style.marginBottom = "50px";
+              } else {
+                item.style.marginTop = "50px";
+              }
+            }
+          });
+        });
+      }
+      refreshselectedtask();
+      //
+      document.addEventListener("mouseup", (e) => {
+        if (
+          (e.target.classList.contains("todo") ||
+            e.target.classList.contains("doing") ||
+            e.target.classList.contains("done")) &&
+          ismoving
+        ) {
+          let movedtask = document.createElement("div");
+          movedtask.classList.add("task");
+          movedtask.setAttribute("onclick", "showtaskdetails(this)");
+          // change type of task
+          if (e.target.classList.contains("todo")) {
+            selectedtask.children[3].innerHTML = "todo";
+            changetasktype("todo");
+          }
+          if (e.target.classList.contains("doing")) {
+            selectedtask.children[3].innerHTML = "doing";
+            changetasktype("doing");
+          }
+          if (e.target.classList.contains("done")) {
+            selectedtask.children[3].innerHTML = "done";
+            changetasktype("done");
+          }
+          //
+          movedtask.innerHTML = selectedtask.innerHTML;
+          e.target.insertBefore(
+            movedtask,
+            e.target.children[e.target.children.length - 3]
+          );
+          selectedtask.remove();
+          refreshselectedtask();
+        }
+        if (ismoving) {
+          ismoving = false;
+          selectedtask.classList.remove("movingtask");
+        }
+        //
+        tasks.forEach((item) => {
+          item.style.marginTop = "0px";
+          item.style.marginBottom = "0px";
+        });
+      });
+      // fetch req for change tasktype
+      function changetasktype(ttype) {
+        let data = {
+          taskid: selectedtask.children[2].innerHTML,
+          tasktype: ttype,
+        };
+        fetch("http://localhost:3005/Edittask", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.message == "Task editted successfully") {
+            }
+          });
+      }
+
+      //
+      document.addEventListener("mousemove", (e) => {
+        if (ismoving) {
+          let rect = document.querySelector(".todo").getBoundingClientRect();
+          selectedtask.classList.add("movingtask");
+          selectedtask.style.left = e.clientX - 125 + "px";
+          selectedtask.style.top = e.clientY - 17.5 + "px";
+        }
+      });
+      //show add task
+      function showaddtask(value) {
+        let addtask = document.querySelectorAll(".addtask");
+        let addtaskinput = document.querySelectorAll(".addtaskinput");
+        let yesorno = document.querySelectorAll(".yesorno");
+        addtask.forEach((item) => {
+          item.style.display = "flex";
+        });
+        addtaskinput.forEach((item) => {
+          item.style.display = "none";
+          item.value = "";
+        });
+        yesorno.forEach((item) => {
+          item.style.display = "none";
+        });
+        //
+        if (value) {
+          value.style.display = "none";
+          value.parentElement.children[
+            value.parentElement.children.length - 2
+          ].style.display = "block";
+          value.parentElement.children[
+            value.parentElement.children.length - 1
+          ].style.display = "flex";
+        }
+      }
+      // hide add task
+      function hideaddtask(value) {
+        value.parentElement.style.display = "none";
+        value.parentElement.parentElement.children[
+          value.parentElement.parentElement.children.length - 3
+        ].style.display = "flex";
+        value.parentElement.parentElement.children[
+          value.parentElement.parentElement.children.length - 2
+        ].style.display = "none";
+        //
+        showaddtask();
+      }
+      // addtask
+      function addtask(value, tasktype) {
+        if (
+          value.parentElement.parentElement.children[
+            value.parentElement.parentElement.children.length - 2
+          ].value != ""
+        ) {
+          //
+          let id = Date.now();
+          // fetchreq
+          let data = {
+            tasktitle:
+              value.parentElement.parentElement.children[
+                value.parentElement.parentElement.children.length - 2
+              ].value,
+            taskdetails: "",
+            taskid: id,
+            tasktype: tasktype,
+          };
+          fetch("http://localhost:3005/createtask", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          })
+            .then((res) => res.json())
+            .then((res) => {
+              if (res.message == "Task created successfully") {
+                let newtask = document.createElement("div");
+                newtask.classList.add("task");
+                newtask.setAttribute("onclick", "showtaskdetails(this)");
+                newtask.innerHTML = `<div class="tasktitle">${data.tasktitle}</div>
+        <div class="taskdetails"></div>
+        <div class="taskid">${id}</div>
+        <div class="tasktype">${tasktype}</div>
+          <div class="edittask">
+            <svg
+              viewBox="0 -0.5 25 25"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></g>
+              <g id="SVGRepo_iconCarrier">
+                <path
+                  d="M13.2942 7.95881C13.5533 7.63559 13.5013 7.16358 13.178 6.90453C12.8548 6.64549 12.3828 6.6975 12.1238 7.02072L13.2942 7.95881ZM6.811 14.8488L7.37903 15.3385C7.38489 15.3317 7.39062 15.3248 7.39623 15.3178L6.811 14.8488ZM6.64 15.2668L5.89146 15.2179L5.8908 15.2321L6.64 15.2668ZM6.5 18.2898L5.7508 18.2551C5.74908 18.2923 5.75013 18.3296 5.75396 18.3667L6.5 18.2898ZM7.287 18.9768L7.31152 19.7264C7.36154 19.7247 7.41126 19.7181 7.45996 19.7065L7.287 18.9768ZM10.287 18.2658L10.46 18.9956L10.4716 18.9927L10.287 18.2658ZM10.672 18.0218L11.2506 18.4991L11.2571 18.491L10.672 18.0218ZM17.2971 10.959C17.5562 10.6358 17.5043 10.1638 17.1812 9.90466C16.8581 9.64552 16.386 9.69742 16.1269 10.0206L17.2971 10.959ZM12.1269 7.02052C11.8678 7.34365 11.9196 7.81568 12.2428 8.07484C12.5659 8.33399 13.0379 8.28213 13.2971 7.95901L12.1269 7.02052ZM14.3 5.50976L14.8851 5.97901C14.8949 5.96672 14.9044 5.95412 14.9135 5.94123L14.3 5.50976ZM15.929 5.18976L16.4088 4.61332C16.3849 4.59344 16.3598 4.57507 16.3337 4.5583L15.929 5.18976ZM18.166 7.05176L18.6968 6.52192C18.6805 6.50561 18.6635 6.49007 18.6458 6.47532L18.166 7.05176ZM18.5029 7.87264L19.2529 7.87676V7.87676L18.5029 7.87264ZM18.157 8.68976L17.632 8.15412C17.6108 8.17496 17.5908 8.19704 17.5721 8.22025L18.157 8.68976ZM16.1271 10.0203C15.8678 10.3433 15.9195 10.8153 16.2425 11.0746C16.5655 11.3339 17.0376 11.2823 17.2969 10.9593L16.1271 10.0203ZM13.4537 7.37862C13.3923 6.96898 13.0105 6.68666 12.6009 6.74805C12.1912 6.80943 11.9089 7.19127 11.9703 7.60091L13.4537 7.37862ZM16.813 11.2329C17.2234 11.1772 17.5109 10.7992 17.4552 10.3888C17.3994 9.97834 17.0215 9.69082 16.611 9.74659L16.813 11.2329ZM12.1238 7.02072L6.22577 14.3797L7.39623 15.3178L13.2942 7.95881L12.1238 7.02072ZM6.24297 14.359C6.03561 14.5995 5.91226 14.9011 5.89159 15.218L7.38841 15.3156C7.38786 15.324 7.38457 15.3321 7.37903 15.3385L6.24297 14.359ZM5.8908 15.2321L5.7508 18.2551L7.2492 18.3245L7.3892 15.3015L5.8908 15.2321ZM5.75396 18.3667C5.83563 19.1586 6.51588 19.7524 7.31152 19.7264L7.26248 18.2272C7.25928 18.2273 7.25771 18.2268 7.25669 18.2264C7.25526 18.2259 7.25337 18.2249 7.25144 18.2232C7.2495 18.2215 7.24825 18.2198 7.24754 18.2185C7.24703 18.2175 7.24637 18.216 7.24604 18.2128L5.75396 18.3667ZM7.45996 19.7065L10.46 18.9955L10.114 17.536L7.11404 18.247L7.45996 19.7065ZM10.4716 18.9927C10.7771 18.9151 11.05 18.7422 11.2506 18.499L10.0934 17.5445C10.0958 17.5417 10.0989 17.5397 10.1024 17.5388L10.4716 18.9927ZM11.2571 18.491L17.2971 10.959L16.1269 10.0206L10.0869 17.5526L11.2571 18.491ZM13.2971 7.95901L14.8851 5.97901L13.7149 5.04052L12.1269 7.02052L13.2971 7.95901ZM14.9135 5.94123C15.0521 5.74411 15.3214 5.6912 15.5243 5.82123L16.3337 4.5583C15.4544 3.99484 14.2873 4.2241 13.6865 5.0783L14.9135 5.94123ZM15.4492 5.7662L17.6862 7.6282L18.6458 6.47532L16.4088 4.61332L15.4492 5.7662ZM17.6352 7.58161C17.7111 7.6577 17.7535 7.761 17.7529 7.86852L19.2529 7.87676C19.2557 7.36905 19.0555 6.88127 18.6968 6.52192L17.6352 7.58161ZM17.7529 7.86852C17.7524 7.97604 17.7088 8.07886 17.632 8.15412L18.682 9.22541C19.0446 8.87002 19.2501 8.38447 19.2529 7.87676L17.7529 7.86852ZM17.5721 8.22025L16.1271 10.0203L17.2969 10.9593L18.7419 9.15928L17.5721 8.22025ZM11.9703 7.60091C12.3196 9.93221 14.4771 11.5503 16.813 11.2329L16.611 9.74659C15.0881 9.95352 13.6815 8.89855 13.4537 7.37862L11.9703 7.60091Z"
+                  fill="#9eacba"
+                ></path>
+              </g>
+            </svg>
+          </div>`;
+                value.parentElement.parentElement.insertBefore(
+                  newtask,
+                  value.parentElement.parentElement.children[
+                    value.parentElement.parentElement.children.length - 3
+                  ]
+                );
+                //
+                refreshselectedtask();
+              }
+              if (res.message == "Please login first") {
+                alert(res.message);
+              }
+            });
+        }
+        //
+        showaddtask();
+      }
+      // showtaskdetails
+      let editingtask;
+      function showtaskdetails(value) {
+        editingtask = value;
+        document.querySelector(".showtask").style.display = "grid";
+        document.querySelector(".carddetails input").value =
+          value.children[0].innerHTML;
+        document.querySelector(".carddetails textarea").value =
+          value.children[1].innerHTML;
+      }
+      // hidetask
+      function hidetaskdetails() {
+        document.querySelector(".showtask").style.display = "none";
+      }
+      // save task
+      function savetask() {
+        let data = {
+          taskid: editingtask.children[2].innerHTML,
+          tasktitle: document.querySelector("#edittasktitle").value,
+          taskdetails: document.querySelector("#edittaskdesc").value,
+        };
+        fetch("http://localhost:3005/Edittask", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.message == "Task editted successfully") {
+              editingtask.children[0].innerHTML =
+                document.querySelector("#edittasktitle").value;
+              editingtask.children[1].innerHTML =
+                document.querySelector("#edittaskdesc").value;
+              //
+              hidetaskdetails();
+            }
+          });
+        //
+      }
+      //delete task
+      function deletetask() {
+        let data = {
+          taskid: editingtask.children[2].innerHTML,
+        };
+        fetch("http://localhost:3005/Deletetask", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.message == "Task deleted successfully") {
+              editingtask.remove();
+              hidetaskdetails();
+            }
+          });
+        //
+      }
+
+      // handle components
+      function components(value) {
+        document.querySelectorAll(".component").forEach((component) => {
+          component.style.display = "none";
+        });
+        if (value) {
+          document.querySelector("." + value).style.display = "grid";
+        }
+      }
+      // signup
+      function signup() {
+        let sname = document.querySelector("#signupupname");
+        let semail = document.querySelector("#signupupemail");
+        let spassword = document.querySelector("#signupuppassword");
+        let data = {
+          fullname: sname.value,
+          email: semail.value,
+          password: spassword.value,
+        };
+        fetch("http://localhost:3005/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            alert(res.message);
+            if ((res.message = "signup successfully")) {
+              sname.value = "";
+              semail.value = "";
+              spassword.value = "";
+              components("login");
+            }
+          });
+      }
+      // login
+      function login() {
+        let lemail = document.querySelector("#loginupemail");
+        let lpassword = document.querySelector("#loginuppassword");
+        let data = {
+          email: lemail.value,
+          password: lpassword.value,
+        };
+        fetch("http://localhost:3005/login", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            alert(res.message);
+            if ((res.message = "Login successful")) {
+              lemail.value = "";
+              lpassword.value = "";
+              loadalldata();
+              components();
+            }
+          });
+      }
+      // change pass type
+      function changepasstype(value) {
+        if (value.innerHTML == "Show") {
+          value.parentElement.querySelector("input[name='password']").type =
+            "text";
+          value.innerHTML = "Hide";
+        } else {
+          value.parentElement.querySelector("input[name='password']").type =
+            "password";
+          value.innerHTML = "Show";
+        }
+      }
+      // first req to get all tasks
+      function loadalldata() {
+        // remove all previous task
+        let alltask = document.querySelectorAll(".task");
+        if (alltask != null) {
+          alltask.forEach((item) => {
+            item.remove();
+          });
+        }
+        //
+        fetch("http://localhost:3005/task", {
+          method: "GET",
+          credentials: "include",
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            res.forEach((item) => {
+              let newtask = document.createElement("div");
+              newtask.classList.add("task");
+              newtask.setAttribute("onclick", "showtaskdetails(this)");
+              newtask.innerHTML = `<div class="tasktitle">${item.tasktitle}</div>
+                <div class="taskdetails">${item.taskdetails}</div>
+                <div class="taskid">${item.taskid}</div>
+                <div class="tasktype">${item.tasktype}</div>
+                <div class="edittask">
+                  <svg
+                    viewBox="0 -0.5 25 25"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path
+                        d="M13.2942 7.95881C13.5533 7.63559 13.5013 7.16358 13.178 6.90453C12.8548 6.64549 12.3828 6.6975 12.1238 7.02072L13.2942 7.95881ZM6.811 14.8488L7.37903 15.3385C7.38489 15.3317 7.39062 15.3248 7.39623 15.3178L6.811 14.8488ZM6.64 15.2668L5.89146 15.2179L5.8908 15.2321L6.64 15.2668ZM6.5 18.2898L5.7508 18.2551C5.74908 18.2923 5.75013 18.3296 5.75396 18.3667L6.5 18.2898ZM7.287 18.9768L7.31152 19.7264C7.36154 19.7247 7.41126 19.7181 7.45996 19.7065L7.287 18.9768ZM10.287 18.2658L10.46 18.9956L10.4716 18.9927L10.287 18.2658ZM10.672 18.0218L11.2506 18.4991L11.2571 18.491L10.672 18.0218ZM17.2971 10.959C17.5562 10.6358 17.5043 10.1638 17.1812 9.90466C16.8581 9.64552 16.386 9.69742 16.1269 10.0206L17.2971 10.959ZM12.1269 7.02052C11.8678 7.34365 11.9196 7.81568 12.2428 8.07484C12.5659 8.33399 13.0379 8.28213 13.2971 7.95901L12.1269 7.02052ZM14.3 5.50976L14.8851 5.97901C14.8949 5.96672 14.9044 5.95412 14.9135 5.94123L14.3 5.50976ZM15.929 5.18976L16.4088 4.61332C16.3849 4.59344 16.3598 4.57507 16.3337 4.5583L15.929 5.18976ZM18.166 7.05176L18.6968 6.52192C18.6805 6.50561 18.6635 6.49007 18.6458 6.47532L18.166 7.05176ZM18.5029 7.87264L19.2529 7.87676V7.87676L18.5029 7.87264ZM18.157 8.68976L17.632 8.15412C17.6108 8.17496 17.5908 8.19704 17.5721 8.22025L18.157 8.68976ZM16.1271 10.0203C15.8678 10.3433 15.9195 10.8153 16.2425 11.0746C16.5655 11.3339 17.0376 11.2823 17.2969 10.9593L16.1271 10.0203ZM13.4537 7.37862C13.3923 6.96898 13.0105 6.68666 12.6009 6.74805C12.1912 6.80943 11.9089 7.19127 11.9703 7.60091L13.4537 7.37862ZM16.813 11.2329C17.2234 11.1772 17.5109 10.7992 17.4552 10.3888C17.3994 9.97834 17.0215 9.69082 16.611 9.74659L16.813 11.2329ZM12.1238 7.02072L6.22577 14.3797L7.39623 15.3178L13.2942 7.95881L12.1238 7.02072ZM6.24297 14.359C6.03561 14.5995 5.91226 14.9011 5.89159 15.218L7.38841 15.3156C7.38786 15.324 7.38457 15.3321 7.37903 15.3385L6.24297 14.359ZM5.8908 15.2321L5.7508 18.2551L7.2492 18.3245L7.3892 15.3015L5.8908 15.2321ZM5.75396 18.3667C5.83563 19.1586 6.51588 19.7524 7.31152 19.7264L7.26248 18.2272C7.25928 18.2273 7.25771 18.2268 7.25669 18.2264C7.25526 18.2259 7.25337 18.2249 7.25144 18.2232C7.2495 18.2215 7.24825 18.2198 7.24754 18.2185C7.24703 18.2175 7.24637 18.216 7.24604 18.2128L5.75396 18.3667ZM7.45996 19.7065L10.46 18.9955L10.114 17.536L7.11404 18.247L7.45996 19.7065ZM10.4716 18.9927C10.7771 18.9151 11.05 18.7422 11.2506 18.499L10.0934 17.5445C10.0958 17.5417 10.0989 17.5397 10.1024 17.5388L10.4716 18.9927ZM11.2571 18.491L17.2971 10.959L16.1269 10.0206L10.0869 17.5526L11.2571 18.491ZM13.2971 7.95901L14.8851 5.97901L13.7149 5.04052L12.1269 7.02052L13.2971 7.95901ZM14.9135 5.94123C15.0521 5.74411 15.3214 5.6912 15.5243 5.82123L16.3337 4.5583C15.4544 3.99484 14.2873 4.2241 13.6865 5.0783L14.9135 5.94123ZM15.4492 5.7662L17.6862 7.6282L18.6458 6.47532L16.4088 4.61332L15.4492 5.7662ZM17.6352 7.58161C17.7111 7.6577 17.7535 7.761 17.7529 7.86852L19.2529 7.87676C19.2557 7.36905 19.0555 6.88127 18.6968 6.52192L17.6352 7.58161ZM17.7529 7.86852C17.7524 7.97604 17.7088 8.07886 17.632 8.15412L18.682 9.22541C19.0446 8.87002 19.2501 8.38447 19.2529 7.87676L17.7529 7.86852ZM17.5721 8.22025L16.1271 10.0203L17.2969 10.9593L18.7419 9.15928L17.5721 8.22025ZM11.9703 7.60091C12.3196 9.93221 14.4771 11.5503 16.813 11.2329L16.611 9.74659C15.0881 9.95352 13.6815 8.89855 13.4537 7.37862L11.9703 7.60091Z"
+                        fill="#9eacba"
+                      ></path>
+                    </g>
+                  </svg>
+                </div>`;
+              if (item.tasktype == "todo") {
+                let todo = document.querySelector(".todo");
+                todo.insertBefore(
+                  newtask,
+                  todo.children[todo.children.length - 3]
+                );
+              }
+              if (item.tasktype == "doing") {
+                let doing = document.querySelector(".doing");
+                doing.insertBefore(
+                  newtask,
+                  doing.children[doing.children.length - 3]
+                );
+              }
+              if (item.tasktype == "done") {
+                let done = document.querySelector(".done");
+                done.insertBefore(
+                  newtask,
+                  done.children[done.children.length - 3]
+                );
+              }
+              //
+            });
+            refreshselectedtask();
+          });
+      }
+      loadalldata();
+    </script>
+  </body>
+</html>
