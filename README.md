@@ -1,21 +1,37 @@
 #########    Todo Website Documentation   ##########
 
 ******Table of Contents*****
+
 @Introduction
+
 @Features
+
 @Technologies Used
+
 @Setup
+
 ----Frontend Setup
+
 ----Backend Setup
+
 ----Database Setup
+
 @Usage
+
 @Signing Up
+
 @Logging In
+
 @Adding a Task
+
 @Editing a Task
+
 @Changing Task Status
+
 @Deleting a Task
+
 @Conclusion
+
 
 
 ______  Introduction  _____
