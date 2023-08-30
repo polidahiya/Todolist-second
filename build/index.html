@@ -748,7 +748,7 @@
           taskid: selectedtask.children[2].innerHTML,
           tasktype: ttype,
         };
-        fetch("http://localhost:3005/Edittask", {
+        fetch("https://to-do-list-second.onrender.com/Edittask", {
           method: "POST",
           credentials: "include",
           headers: {
@@ -829,7 +829,7 @@
             taskid: id,
             tasktype: tasktype,
           };
-          fetch("http://localhost:3005/createtask", {
+          fetch("https://to-do-list-second.onrender.com/createtask", {
             method: "POST",
             credentials: "include",
             headers: {
@@ -905,7 +905,7 @@
           tasktitle: document.querySelector("#edittasktitle").value,
           taskdetails: document.querySelector("#edittaskdesc").value,
         };
-        fetch("http://localhost:3005/Edittask", {
+        fetch("https://to-do-list-second.onrender.com/Edittask", {
           method: "POST",
           credentials: "include",
           headers: {
@@ -931,7 +931,7 @@
         let data = {
           taskid: editingtask.children[2].innerHTML,
         };
-        fetch("http://localhost:3005/Deletetask", {
+        fetch("https://to-do-list-second.onrender.com/Deletetask", {
           method: "POST",
           credentials: "include",
           headers: {
@@ -968,7 +968,7 @@
           email: semail.value,
           password: spassword.value,
         };
-        fetch("http://localhost:3005/signup", {
+        fetch("https://to-do-list-second.onrender.com/signup", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -994,7 +994,7 @@
           email: lemail.value,
           password: lpassword.value,
         };
-        fetch("http://localhost:3005/login", {
+        fetch("https://to-do-list-second.onrender.com/login", {
           method: "POST",
           credentials: "include",
           headers: {
@@ -1035,7 +1035,7 @@
           });
         }
         //
-        fetch("http://localhost:3005/task", {
+        fetch("https://to-do-list-second.onrender.com/task", {
           method: "GET",
           credentials: "include",
         })
