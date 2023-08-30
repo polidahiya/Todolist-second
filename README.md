@@ -1,4 +1,5 @@
 #########    Todo Website Documentation   ##########
+<img width="960" alt="Screenshot 2023-08-30 221320" src="https://github.com/polidahiya/Todolist-second/assets/121171390/e1725367-030d-4e99-9223-a1046051cf31">
 
 ******Table of Contents*****
 
@@ -114,6 +115,7 @@ Release the mouse button to drop the task into the new column.
 
 ---Deleting a Task
 Locate the task you want to delete.
+
 Click on the task to open its details.
 Click on the "Delete" button.
 Confirm the deletion in the prompt that appears.
