@@ -2,35 +2,35 @@
 
 ******Table of Contents*****
 
-@Introduction
+---Introduction
 
-@Features
+---Features
 
-@Technologies Used
+---Technologies Used
 
-@Setup
+---Setup
 
-----Frontend Setup
+Frontend Setup
 
-----Backend Setup
+Backend Setup
 
-----Database Setup
+Database Setup
 
-@Usage
+---Usage
 
-@Signing Up
+---Signing Up
 
-@Logging In
+---Logging In
 
-@Adding a Task
+---Adding a Task
 
-@Editing a Task
+---Editing a Task
 
-@Changing Task Status
+---Changing Task Status
 
-@Deleting a Task
+---Deleting a Task
 
-@Conclusion
+---Conclusion
 
 
 
