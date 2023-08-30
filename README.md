@@ -38,13 +38,18 @@ ______  Introduction  _____
 The Todo website is a task management application that allows users to organize their tasks effectively. It provides a user-friendly interface for adding, editing, categorizing, and managing tasks. Users can also sign up and log in to their accounts to access their tasks securely. The website is built using HTML, CSS, and JavaScript for the frontend, and Node.js for the backend.
 
 _______  Features   _______
+
 ---Sign Up and Log In: Users can create accounts, log in, and log out securely.
+
 
 ---Add New Task: Users can add new tasks by providing a title and description.
 
+
 ---Edit Task: Users can edit the title and description of existing tasks.
 
+
 ---Change Task Status: Tasks can be moved between "To-Do," "Doing," and "Done" columns using drag and drop functionality.
+
 
 ---Delete Task: Users can delete tasks they no longer need.
 
