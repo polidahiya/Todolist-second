@@ -391,6 +391,50 @@
         background-color: red;
         border-color: red;
       }
+      /* delete prompt */
+      .deleteprompt {
+        position: fixed;
+        height: 100dvh;
+        width: 100vw;
+        top: 0;
+        left: 0;
+        background-color:rgba(0, 0, 0, 0.363);
+        display: none;
+        place-content: center;
+      }
+      .promptbox{
+        height: 200px;
+        aspect-ratio: 16/9;
+        background-color: rgb(143, 63, 101);
+        display: flex;
+        flex-direction: column;
+      }
+      .promptbox p{
+        text-align: center;
+        color: white;
+        margin-top: 70px;
+        font-size: 20px;
+      }
+      .promptbuttons{
+        margin-top: auto;
+        padding: 30px 50px;
+        display: flex;
+        gap: 40px;
+      }
+      .promptbuttons button{
+        width: 100%;
+        aspect-ratio: 32/9;
+        background-color: transparent;
+        border: 1px solid white;
+        color: white;
+        cursor: pointer;
+        user-select: none;
+        border-radius: 5px;
+      }
+      .promptbuttons button:first-child:hover{
+        background-color: red;
+        border: none;
+      }
       /* singnup */
       .cancel {
         position: absolute;
@@ -615,9 +659,19 @@
         <div class="showtaskbuttons">
           <div class="save" onclick="savetask()">Save</div>
           <div class="exit" onclick="hidetaskdetails()">Exit</div>
-          <div class="delete" onclick="deletetask()">Delete</div>
+          <div class="delete" onclick="components('deleteprompt')">Delete</div>
         </div>
         <div class="showtaskcanclebutton" onclick="hidetaskdetails()">X</div>
+      </div>
+    </div>
+    <!-- delete task prompt -->
+    <div class="deleteprompt component">
+      <div class="promptbox">
+        <p>Delete this task?</p>
+        <div class="promptbuttons">
+          <button onclick="deletetask()">Delete</button>
+          <button onclick="components()">Cancel</button>
+        </div> 
       </div>
     </div>
     <!-- signup -->
@@ -946,9 +1000,10 @@
               hidetaskdetails();
             }
           });
-        //
       }
+      //delete task prompt
 
+      
       // handle components
       function components(value) {
         document.querySelectorAll(".component").forEach((component) => {
